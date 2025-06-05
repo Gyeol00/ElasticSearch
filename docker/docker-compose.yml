@@ -1,18 +1,20 @@
-version: '3.8'
 
 networks:
   spring-net:
-    external: true
     name: spring-net
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+    build:
+      context: ./elasticSearch/nori
+      dockerfile: Dockerfile
+    image: custom-elasticsearch-with-nori:8.8.2
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    # entrypoint 제거 → Nori는 이미 내장돼 있으므로 설치 불필요
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -20,6 +22,11 @@ services:
       - es-data:/usr/share/elasticsearch/data
     networks:
       - spring-net
+    healthcheck:
+      test: curl -s http://localhost:9200 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.8.2
@@ -67,6 +74,9 @@ services:
       - spring-net
 
   spring-app:
+    build:
+      context: ./elasticSearch
+      dockerfile: Dockerfile
     image: spring-app:1.0.2
     container_name: spring-app
     depends_on:
@@ -79,6 +89,23 @@ services:
       SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
     ports:
       - "8081:8080"
+    networks:
+      - spring-net
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.8.2
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logstash/config:/usr/share/logstash/config
+      - ./mysql-connector:/usr/share/logstash/mysql-connector
+    environment:
+      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+    depends_on:
+      mysql:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
     networks:
       - spring-net
 
