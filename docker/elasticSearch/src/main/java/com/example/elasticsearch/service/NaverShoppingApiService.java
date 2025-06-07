@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
@@ -40,21 +44,19 @@ public class NaverShoppingApiService {
             for (int start = 1; start <= 1001; start += 100) {
                 searchAndSaveProducts(keyword, 100, start);
             }
-
         }
     }
 
     public void searchAndSaveProducts(String query, int display, int start) {
         try {
             String apiURL = "https://openapi.naver.com/v1/search/shop.json?query=" +
-                    java.net.URLEncoder.encode(query, "UTF-8") +
+                    URLEncoder.encode(query, "UTF-8") +
                     "&display=" + display + "&start=" + start;
 
             log.info("네이버 API 요청 URL: {}", apiURL);
-            log.info("ClientId: '{}'", clientId);
 
-            java.net.URL url = new java.net.URL(apiURL);
-            java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
+            URL url = new URL(apiURL);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
             con.setRequestProperty("X-Naver-Client-Id", clientId);
@@ -63,29 +65,16 @@ public class NaverShoppingApiService {
             int responseCode = con.getResponseCode();
             log.info("네이버 API 응답 코드: {}", responseCode);
 
-            BufferedReader br;
-            if (responseCode == 200) {
-                br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            } else {
-                br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-                StringBuilder errorResponse = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    errorResponse.append(line);
-                }
-                br.close();
-                log.error("네이버 API 에러 응답: {}", errorResponse.toString());
-                return; // 에러 시 처리 종료
-            }
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    responseCode == 200 ? con.getInputStream() : con.getErrorStream()
+            ));
 
             StringBuilder response = new StringBuilder();
-            String inputLine;
-            while ((inputLine = br.readLine()) != null) {
-                response.append(inputLine);
+            String line;
+            while ((line = br.readLine()) != null) {
+                response.append(line);
             }
             br.close();
-
-            log.debug("네이버 API 응답 JSON: {}", response.toString());
 
             JsonNode root = objectMapper.readTree(response.toString());
             JsonNode items = root.path("items");
@@ -96,31 +85,38 @@ public class NaverShoppingApiService {
                 String title = item.path("title").asText().replaceAll("<.*?>", "");
                 String link = item.path("link").asText();
                 String mallName = item.path("mallName").asText("");
+                String image = item.path("image").asText();
                 int price = item.path("lprice").asInt(0);
 
                 if (!productRepository.existsByLink(link)) {
+                    double ratingAvg = Math.round(ThreadLocalRandom.current().nextDouble(0.0, 5.0) * 10.0) / 10.0;
+                    int reviewCount = ThreadLocalRandom.current().nextInt(0, 1001);
+                    int salesCount = ThreadLocalRandom.current().nextInt(0, 5001);
+
                     Product product = Product.builder()
-                            .productName(title)
+                            .prodName(title)
+                            .company(mallName)
+                            .snameList(image)
+                            .prodPrice(price)
                             .link(link)
-                            .mallName(mallName)
-                            .price(price)
-                            .keyword(query)
+                            .ratingAvg(ratingAvg)
+                            .reviewCount(reviewCount)
+                            .salesCount(salesCount)
                             .build();
 
                     productRepository.save(product);
                     savedCount++;
 
-                    log.info("DB 저장 완료 - 상품명: {}, 링크: {}, 가격: {}, 키워드: {}", title, link, price, query);
+                    log.info("저장 완료 - 제목: {}, 가격: {}, 링크: {}", title, price, link);
                 } else {
-                    log.debug("이미 존재하는 상품 - 링크: {}", link);
+                    log.debug("중복된 상품 - 링크: {}", link);
                 }
             }
 
-            log.info("키워드 '{}' - start {}에서 저장된 상품 개수: {}", query, start, savedCount);
+            log.info("키워드 '{}' - {}부터 저장된 상품 수: {}", query, start, savedCount);
 
         } catch (Exception e) {
-            log.error("검색 및 저장 중 오류 발생", e);
+            log.error("상품 검색 및 저장 중 오류 발생", e);
         }
     }
-
 }

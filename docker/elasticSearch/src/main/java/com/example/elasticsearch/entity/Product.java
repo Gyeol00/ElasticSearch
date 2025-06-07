@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import jakarta.persistence.Id;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "product")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,19 +18,19 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String keyword;
+    private String prodName;
 
-    @Column(name = "product_name")
-    private String productName;
+    private String company;
 
-    private Integer price;
+    private Double ratingAvg;
 
-    @Column(unique = true, length = 500)
+    private Integer reviewCount = 0;
+
+    private Integer prodPrice;
+
+    private String snameList;
+
     private String link;
 
-    @Column(name = "mall_name")
-    private String mallName;
-
-    @Column(name = "crawled_at")
-    private LocalDateTime crawledAt = LocalDateTime.now();
+    private Integer salesCount = 0;
 }

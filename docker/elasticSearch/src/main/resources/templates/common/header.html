@@ -1,0 +1,141 @@
+<html xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<script src="/js/aside.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('searchInput');
+        const autocompleteList = document.getElementById('autocompleteList');
+
+        input.addEventListener('input', () => {
+            const keyword = input.value.trim();
+            if (keyword.length < 1) { // 최소 글자 수 제한
+                autocompleteList.style.display = 'none';
+                return;
+            }
+
+            fetch('/product/autocomplete?keyword=' + encodeURIComponent(keyword))
+                .then(res => res.json())
+                .then(data => {
+                    autocompleteList.innerHTML = '';
+                    if (data.length === 0) {
+                        autocompleteList.style.display = 'none';
+                        return;
+                    }
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.textContent = item;
+                        div.style.padding = '5px';
+                        div.style.cursor = 'pointer';
+                        div.addEventListener('click', () => {
+                            input.value = item;
+                            autocompleteList.style.display = 'none';
+                            document.getElementById('searchForm').submit();
+                        });
+                        autocompleteList.appendChild(div);
+                    });
+                    autocompleteList.style.display = 'block';
+                })
+                .catch(err => {
+                    autocompleteList.style.display = 'none';
+                    console.error('자동완성 에러:', err);
+                });
+        });
+
+        // 검색창 바깥 클릭시 자동완성 숨기기
+        document.addEventListener('click', (e) => {
+            if (!document.querySelector('.search').contains(e.target)) {
+                autocompleteList.style.display = 'none';
+            }
+        });
+    });
+
+</script>
+<header>
+    <div class="header_main">
+        <div class="user_menu">
+            <div class="menu_items">
+                <div class="login">
+                    <div sec:authorize="isAuthenticated()">
+                        <a th:href="@{/user/logout}">로그아웃</a>
+                    </div>
+                    <div sec:authorize="isAnonymous()">
+                        <a th:href="@{/user/member/login}">로그인/회원가입</a>
+                    </div>
+                </div>
+                <a th:href="@{/cs/index}">고객센터</a>
+                <a th:href="@{/my/order}">주문배송</a>
+                <div sec:authorize="hasAnyRole('ADMIN', 'SELLER')">
+                    <a th:href="@{/admin}">관리페이지</a>
+                </div>
+            </div>
+        </div>
+        <div class="logo">
+            <a th:href="@{/}">
+                <img th:src="@{/upload/{file}(file=${appInfo.headerLogo})}"
+                     onerror="this.src='/images/logo.png';"
+                     alt="lotteOn">
+            </a>
+            <div class="search">
+                <form action="/product/searchList">
+                    <input id="searchInput" type="search" name="keyword" th:value="${keyword}" placeholder="검색어를 입력하세요" />
+                    <button type="submit" class="header_search">
+                        <img src="/images/search_ico.svg" alt="검색" class="search-icon"/>
+                    </button>
+                    <div id="autocompleteList"></div>
+                </form>
+            </div>
+            <div class="user-icons">
+                <div class="icon-item">
+                    <a href="#">
+                        <img src="/images/lotteon/나의 찜.PNG" alt="나의 찜">
+                    </a>
+                    <span>나의 찜</span>
+                </div>
+                <div class="icon-item">
+                    <a th:href="@{/my/home}">
+                        <img src="/images/lotteon/마이롯데.PNG" alt="마이롯데">
+                    </a>
+                    <span>마이롯데</span>
+                </div>
+                <div class="icon-item">
+                    <a th:href="@{/product/cart}">
+                        <img src="/images/lotteon/장바구니.PNG" alt="장바구니">
+                    </a>
+                    <span>장바구니</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="gnb">
+        <div class="category-wrapper">
+            <div class="category" id="categoryBtn">
+                <img src="/images/lotteon/목록버튼.PNG" alt="카테고리" />
+
+                <div class="category-menu" id="categoryMenu">
+                    <ul>
+                        <li th:each="item, i : ${appInfo.Categories}" th:attr="data-index=${i.index}">
+                            <a href="#">[[${item.mainCategoryName}]]</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="subcategory-menu" id="subcategoryMenu">
+                    <ul th:each="item, i : ${appInfo.Categories}" th:attr="data-index=${i.index}">
+                        <li th:each="sub : ${item.subCategories}">
+                            <a th:href="@{/product/list(subCateNo=${sub.subCateNo})}">[[${sub.subCategoryName}]]</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <ul class="nav-menu">
+            <li><a href="#">히트상품</a></li>
+            <li><a href="#">추천상품</a></li>
+            <li><a href="#">최신상품</a></li>
+            <li><a href="#">인기상품</a></li>
+            <li><a href="#">할인상품</a></li>
+        </ul>
+    </div>
+</header>
+

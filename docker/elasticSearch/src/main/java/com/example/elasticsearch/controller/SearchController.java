@@ -1,20 +1,24 @@
 package com.example.elasticsearch.controller;
 
+import com.example.elasticsearch.dto.ProductDTO;
 import com.example.elasticsearch.service.NaverShoppingApiService;
+import com.example.elasticsearch.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/search")
 public class SearchController {
 
+    private final ProductService productService;
+
     @Autowired
     private NaverShoppingApiService naverShoppingApiService;
-
 
     // 기존 단일 검색 API
     @GetMapping("/shopping")
@@ -29,5 +33,11 @@ public class SearchController {
         log.info("searchAllKeywords() 호출됨");
         naverShoppingApiService.searchAndSaveProductsForKeywords();
         return "Started search and save for all keywords.";
+    }
+
+    @PostMapping("/product")
+    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
+        ProductDTO savedProduct = productService.saveProduct(productDTO);
+        return ResponseEntity.ok(savedProduct);
     }
 }
