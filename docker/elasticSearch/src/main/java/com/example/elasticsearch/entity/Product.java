@@ -1,17 +1,17 @@
 package com.example.elasticsearch.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
-import jakarta.persistence.Id;
 
 
+@Builder
 @Entity
 @Table(name = "product")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Product {
 
     @Id

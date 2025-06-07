@@ -1,23 +1,25 @@
 package com.example.elasticsearch.service;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
 import com.example.elasticsearch.document.ProductDocument;
 import com.example.elasticsearch.dto.ProductDTO;
 import com.example.elasticsearch.entity.Product;
 import com.example.elasticsearch.repository.ProductDocumentRepository;
 import com.example.elasticsearch.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductDocumentRepository productDocumentRepository;
-
-    public ProductService(ProductRepository productRepository,
-                          ProductDocumentRepository productDocumentRepository) {
-        this.productRepository = productRepository;
-        this.productDocumentRepository = productDocumentRepository;
-    }
+    private final ElasticsearchClient elasticsearchClient;
 
     public ProductDTO saveProduct(ProductDTO productDTO) {
         // 1) Entity 변환 및 DB 저장
@@ -53,5 +55,23 @@ public class ProductService {
         return productDTO.toBuilder().id(product.getId()).build();
     }
 
-    // 검색, 조회 기능 등 추가 가능
+    public List<String> autocompleteProdName(String prefix) throws IOException {
+        SearchResponse<ProductDocument> response = elasticsearchClient.search(s -> s
+                        .index("product_20240607_test")
+                        .query(q -> q
+                                .prefix(p -> p
+                                        .field("prodName")
+                                        .value(prefix)
+                                )
+                        )
+                        .size(10),  // 최대 10개 추천
+                ProductDocument.class);
+
+        // 추천 결과에서 prodName만 추출
+        return response.hits().hits().stream()
+                .map(hit -> hit.source().getProdName())
+                .distinct()  // 중복 제거
+                .toList();
+    }
+
 }
