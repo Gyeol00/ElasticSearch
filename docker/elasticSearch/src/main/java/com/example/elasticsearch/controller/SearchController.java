@@ -40,22 +40,10 @@ public class SearchController {
         return "Started search and save for all keywords.";
     }
 
-    @PostMapping("/product")
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
-        ProductDTO savedProduct = productService.saveProduct(productDTO);
-        return ResponseEntity.ok(savedProduct);
+    @GetMapping("/products/autocomplete")
+    public List<String> autocomplete(@RequestParam String keyword) {
+        return productService.autocomplete(keyword);
     }
 
-    @GetMapping("/autocomplete")
-    public ResponseEntity<List<String>> autocomplete(@RequestParam String keyword) {
-        try {
-            List<String> suggestions = productService.autocompleteProdName(keyword);
-            return ResponseEntity.ok(suggestions);
-        } catch (IOException e) {
-            // 로그 남기고, 클라이언트에 에러 메세지 응답
-            log.error("Elasticsearch search error", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
-        }
-    }
 
 }

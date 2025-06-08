@@ -368,4 +368,47 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
+    // 엘라스틱 서치 자동 완성
+    const input = document.getElementById("subKeywordInput");
+    const autocompleteList = document.getElementById("autocomplete-list");
+
+    let debounceTimer;
+
+    input.addEventListener("input", function () {
+        const keyword = input.value.trim();
+        clearTimeout(debounceTimer);
+
+        if (keyword.length < 2) {
+            autocompleteList.innerHTML = '';
+            return;
+        }
+
+        debounceTimer = setTimeout(() => {
+            fetch(`/products/autocomplete?keyword=${encodeURIComponent(keyword)}`)
+                .then(response => response.json())
+                .then(data => {
+                    autocompleteList.innerHTML = ''; // 기존 자동완성 지우기
+                    data.forEach(item => {
+                        const suggestion = document.createElement("div");
+                        suggestion.textContent = item;
+                        suggestion.addEventListener("click", () => {
+                            input.value = item;
+                            autocompleteList.innerHTML = '';
+                            document.getElementById("productSearchForm").submit(); // 검색 실행
+                        });
+                        autocompleteList.appendChild(suggestion);
+                    });
+                })
+                .catch(err => {
+                    console.error("자동완성 오류:", err);
+                });
+        }, 300); // 300ms 디바운스
+    });
+
+    // 외부 클릭 시 자동완성 닫기
+    document.addEventListener("click", function (e) {
+        if (!autocompleteList.contains(e.target) && e.target !== input) {
+            autocompleteList.innerHTML = '';
+        }
+    });
 });

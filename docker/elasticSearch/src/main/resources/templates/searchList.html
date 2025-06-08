@@ -25,6 +25,8 @@
             <form action="#" id="productSearchForm">
               <div class="search_area">
                 <input type="search" id="subKeywordInput" placeholder="검색어를 입력하세요">
+                <div id="autocomplete-list" class="autocomplete-items" th:text="${keyword}"></div>
+
                 <button type="submit" class="search_icon">
                   <img src="/images/search_ico.svg" alt="검색" class="search_iconImg">
                 </button>
