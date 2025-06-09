@@ -1,7 +1,7 @@
 # Naver Shopping Data Crawling & Search Platform
 
 ## ✅ 프로젝트 개요
-네이버 쇼핑 데이터를 크롤링하여 MySQL에 저장하고, Logstash를 통해 실시간으로 Elasticsearch에 적재합니다.  
+네이버 공식 쇼핑 API를 활용한 상품 데이터 수집 후 MySQL에 저장하고, Logstash를 통해 실시간으로 Elasticsearch에 적재합니다.  
 Elasticsearch에서는 노리 형태소 분석기를 적용해 정교한 한글 형태소 분석 기반 검색 기능을 제공합니다.  
 Kibana 대시보드를 통해 데이터 모니터링과 시각화가 가능합니다.
 
@@ -26,7 +26,7 @@ docker 실행 후 https://localhost:5601 검색, 접속되면 kibana 연결 완�
 
 ## 4️⃣ ElasticSearch 인덱스 및 노리 형태소 분석기 설정
 1. **MySQL 데이터 관리**
-   - 크롤링한 데이터를 저장할 테이블 설계 및 생성
+   - 수집한 데이터를 저장할 테이블 설계 및 생성
 
 2. **Logstash를 통한 실시간 데이터 적재**
    - pipeline 폴더 안 logstash.conf (input, filter, output 등) 설정
@@ -55,7 +55,7 @@ docker 실행 후 https://localhost:5601 검색, 접속되면 kibana 연결 완�
   },
   "size": 1
 }**
-위 명령어로 kibana에서 확인 시
+<br>위 명령어로 kibana에서 확인 시
 <img width="1352" alt="스크린샷 2025-06-08 오후 4 18 36" src="https://github.com/user-attachments/assets/009e5e06-c19c-461c-a9c8-502c42a2d1bc" />
 <img width="1352" alt="스크린샷 2025-06-08 오후 4 18 48" src="https://github.com/user-attachments/assets/17f606be-66cd-43f5-ad05-3aa864eef6e2" />
 위와 같은 결과를 확인 할 수 있으며 **1건만 조회한 결과** 데이터가 잘 나오는 것을 확인할 수 있음
@@ -90,7 +90,24 @@ index_time_in_millis: 15,291ms (즉, 15.291초)
 **3만건 처리 시간** <br>
 30,000 건×0.055 ms≈1,650 ms=약 1.65초
 
-⭐️ 결론, **3만 건의 데이터를 처리하는 데 약 1.65초 정도 소요**
+#### ⭐️ 결론, **3만 건의 데이터를 처리하는 데 약 1.65초 정도 소요**
+
+---
+
+### 사용자 검색 화면 구성 및 검색 결과 출력
+#### ➡️ "운동" 검색 시 운동 키워드가 들어간 상품들이 검색되며 검색창 텍스트 옆 상품 총 갯수가 뜨는 것을 확인할 수 있음
+![_______________________________2025-06-09_________________9 53 23_720](https://github.com/user-attachments/assets/9bbb45bd-3232-408b-b45d-5cd68746b6e2)
+![_______________________________2025-06-09_________________9 54 03_720](https://github.com/user-attachments/assets/3cdcf97e-6f6b-4301-aafd-f658bce8d894)
+
+#### ➡️ 페이징 처리
+![_______________________________2025-06-09_________________9 54 12_720](https://github.com/user-attachments/assets/59f62ba8-26b9-447c-94c3-96a0aa70f29c)
+![_______________________________2025-06-09_________________9 54 19_720](https://github.com/user-attachments/assets/49c7dcd2-6256-4a30-b412-118090d9d76b)
+
+#### ➡️ "귀걸" 검색 시 귀걸 키워드가 들어간 상품들이 검색됨
+![_______________________________2025-06-09_________________9 54 44_720](https://github.com/user-attachments/assets/47757e66-bb1b-48bb-8680-0c18bb620a50)
+![_______________________________2025-06-09_________________9 54 53_720](https://github.com/user-attachments/assets/38f391f7-7a61-4eec-87fb-6dd90d9c8ae8)
+
+
 
 ---
 
