@@ -2,7 +2,8 @@
 
 ## ✅ 프로젝트 개요
 네이버 공식 쇼핑 API를 활용한 상품 데이터 수집 후 MySQL에 저장하고, Logstash를 통해 실시간으로 Elasticsearch에 적재합니다.  
-Elasticsearch에는 노리(Nori) 형태소 분석기를 적용해 정교한 한글 기반 검색 기능을 구현하였으며, Spring Boot 기반 REST API로 Elasticsearch 검색 기능을 클라이언트 화면에 연동했습니다. 또한, Kibana 대시보드를 통해 데이터 모니터링과 시각화가 가능합니다.
+Elasticsearch에는 노리(Nori) 형태소 분석기를 적용해 정교한 한글 기반 검색 기능을 구현하였으며, Spring Boot 기반 REST API로 Elasticsearch 검색 기능을 클라이언트 화면에 연동했습니다.<br>
+또한, Kibana 대시보드를 통해 데이터 모니터링과 시각화가 가능합니다.<br>
 **총 3만 건의 데이터를 약 1.65초 만에 처리하여 빠르고 안정적인 검색 성능을 확인했습니다.**
 
 ## 1️⃣ 주요 기능
