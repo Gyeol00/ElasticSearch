@@ -66,7 +66,7 @@ docker 실행 후 https://localhost:5601 검색, 접속되면 kibana 연결 완�
 
 ### Logstash를 이용한 실시간 데이터 적재 및 시간 단축
 **(GET product_20240607_test/_stats/indexing?pretty)**
-위 명령어로 kibana에서 확인 시
+<br>위 명령어로 kibana에서 확인 시
 <img width="1352" alt="스크린샷 2025-06-08 오후 4 05 49" src="https://github.com/user-attachments/assets/d9a9e0eb-6447-4e50-aa1d-a978d2399ff0" />
 위와 같은 결과를 확인 할 수 있음
 | 항목                              | 설명                                 |
