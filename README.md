@@ -113,7 +113,7 @@ index_time_in_millis: 15,291ms (즉, 15.291초)
 
 ---
 
-### (개발중) Edge NGram 연관 검색어 - 현재 Edge NGram 인덱스 생성 및 적용까지 완료되어 있으며, API 사용하여 클라이언트 화면에서 검색 시 연관 검색어 뜨면 구현 완료
+### (개발중) Edge NGram 연관 검색어 - 현재 Edge NGram 인덱스 생성 및 적용까지 완료되어 있으며, API 사용하여 클라이언트 화면에서 검색 시 연관 검색어 구현중
 
 ### Edge N-Gram Tokenization 결과
 
