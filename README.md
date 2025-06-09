@@ -1,4 +1,4 @@
-# 네이버 쇼핑 API 기반 실시간 상품 검색 시스템 구현
+# 실시간 상품 검색 시스템 구현 With Elasticsearch
 
 ## ✅ 프로젝트 개요
 네이버 공식 쇼핑 API를 활용한 상품 데이터 수집 후 MySQL에 저장하고, Logstash를 통해 실시간으로 Elasticsearch에 적재합니다.  
