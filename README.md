@@ -2,21 +2,22 @@
 
 ## ✅ 프로젝트 개요
 네이버 공식 쇼핑 API를 활용한 상품 데이터 수집 후 MySQL에 저장하고, Logstash를 통해 실시간으로 Elasticsearch에 적재합니다.  
-Elasticsearch에서는 노리 형태소 분석기를 적용해 정교한 한글 형태소 분석 기반 검색 기능을 제공합니다.  
-Kibana 대시보드를 통해 데이터 모니터링과 시각화가 가능합니다.
+Elasticsearch에서는 노리(Nori) 형태소 분석기를 적용해 정교한 한글 형태소 분석 기반 검색 기능을 제공합니다.
+Spring Boot 기반 REST API를 통해 Elasticsearch 검색 기능을 클라이언트 화면에 연동하고, Kibana 대시보드를 통해 데이터 모니터링과 시각화가 가능합니다.
 
 ## 1️⃣ 주요 기능
 - 네이버 공식 쇼핑 API를 활용한 상품 데이터 수집
 - 수집한 데이터를 MySQL에 실시간 저장
 - Logstash를 통한 데이터 적재 자동화 및 처리 시간 단축
 - Elasticsearch 기반 실시간 검색 및 노리 형태소 분석 적용
+- Spring Boot 기반 API로 클라이언트 화면에 검색 결과 연동
 - Kibana 대시보드로 시각화 및 모니터링
 - (개발중) Edge NGram 자동 연관 검색어 기능
 
 ## 2️⃣ 아키텍처 및 기술 스택
 - Docker 기반 컨테이너 구성: MySQL, Logstash, Elasticsearch, Spring Boot API, Kibana
 - 기술 스택: Java, Spring Boot, Elasticsearch (노리 형태소 분석기), Logstash, Docker, Kibana
-- 데이터 흐름: 네이버 쇼핑 API 호출 → MySQL 저장 → Logstash → Elasticsearch 적재 → Kibana 시각화
+- 데이터 흐름: 네이버 쇼핑 API 호출 → MySQL 저장 → Logstash → Elasticsearch(노리 분석기 적용) 적재 → Kibana 시각화 → Spring API로 클라이언트 화면에 검색 결과 노출
 
 ## 3️⃣ 실행 및 설치 방법
 ### Docker-compose 실행 방법
