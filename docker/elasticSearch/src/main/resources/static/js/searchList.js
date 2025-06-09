@@ -1,16 +1,4 @@
 
-// 슬라이드 인덱스 저장
-let index = 0;
-
-// 슬라이더 이동 함수
-function moveSlide(direction) {
-    const slides = document.getElementById('slides');
-    const totalSlides = Math.ceil(slides.children.length / 2);
-    index += direction;
-    if (index < 0) index = totalSlides - 1;
-    if (index >= totalSlides) index = 0;
-    slides.style.transform = `translateX(-${index * 100}%)`;
-}
 
 function toggleView(view) {
     const wrapper = document.getElementById('productWrapper');
@@ -47,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error("ID가 'productSearchForm'인 폼을 찾을 수 없습니다.");
     }
-
 
     // 상품 목록 로드
     loadProducts(`&sortType=salesCount&period=`);
@@ -247,8 +234,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const subKeywordInputElement = document.getElementById('subKeywordInput');
         const subKeywordParam = subKeywordInputElement ? subKeywordInputElement.value.trim() : '';
 
-        console.log(keywordParam);
-
+        if (!keywordParam.trim() && !subKeywordParam) {
+            const productListContainer = document.querySelector('#productWrapper .product-list');
+            const pageContainer        = document.querySelector('.page');
+            productListContainer.innerHTML = `
+            <div class="no-results-message">
+              먼저 검색어를 입력해주세요.
+            </div>`;
+            if (pageContainer) pageContainer.innerHTML = '';
+            return;
+        }
 
         const selectedFilters = [];
         document.querySelectorAll('.search_filters input[name="filter"]:checked').forEach(checkbox => {
@@ -328,23 +323,26 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 } else {
                     data.dtoList.forEach(product => {
+                        const productItem = document.createElement('div');
+                        productItem.classList.add('product-item');
+                        productItem.setAttribute('data-prodno', product.prodNo);
                         productItem.innerHTML = `
-                        <img class="product-img" src="${product.snameList}" alt="${product.prodName}" />
-                        <div class="product-info">
-                            <span class="vendor-name">${product.company}</span><br>
-                            <span class="pname">${product.prodName}</span>
-                            <div class="meta">
-                                <span>★ ${product.ratingAvg !== null ? product.ratingAvg.toFixed(1) : 0}</span>&nbsp;|&nbsp;리뷰 <span>${product.reviewCount}</span>
-                            </div>
+                    <img class="product-img" src="${product.snameList}" alt="${product.prodName}" />
+                    <div class="product-info">
+                        <span class="vendor-name">${product.company}</span><br>
+                        <span class="pname">${product.prodName}</span>
+                        <div class="meta">
+                            <span>★ ${product.ratingAvg !== null ? product.ratingAvg.toFixed(1) : 0}</span>&nbsp;|&nbsp;리뷰 <span>${product.reviewCount}</span>
                         </div>
-                        <div class="product-price">
-                            <span>${formatNumber(product.prodPrice)}원</span>
-                            <div class="icons">
-                                <button><img src="/images/product/icon_favorite.png" alt="찜"></button>
-                                <button><img src="/images/product/icon_cart.png" alt="장바구니"></button>
-                            </div>
+                    </div>
+                    <div class="product-price">
+                        <del>${formatNumber(product.prodPrice)}원</del><br>
+                        <div class="icons">
+                            <button><img src="/images/product/icon_favorite.png" alt="찜"></button>
+                            <button><img src="/images/product/icon_cart.png" alt="장바구니"></button>
                         </div>
-                    `;
+                    </div>
+                `;
                         productListContainer.appendChild(productItem);
                     });
 
@@ -368,47 +366,4 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // 엘라스틱 서치 자동 완성
-    const input = document.getElementById("subKeywordInput");
-    const autocompleteList = document.getElementById("autocomplete-list");
-
-    let debounceTimer;
-
-    input.addEventListener("input", function () {
-        const keyword = input.value.trim();
-        clearTimeout(debounceTimer);
-
-        if (keyword.length < 2) {
-            autocompleteList.innerHTML = '';
-            return;
-        }
-
-        debounceTimer = setTimeout(() => {
-            fetch(`/products/autocomplete?keyword=${encodeURIComponent(keyword)}`)
-                .then(response => response.json())
-                .then(data => {
-                    autocompleteList.innerHTML = ''; // 기존 자동완성 지우기
-                    data.forEach(item => {
-                        const suggestion = document.createElement("div");
-                        suggestion.textContent = item;
-                        suggestion.addEventListener("click", () => {
-                            input.value = item;
-                            autocompleteList.innerHTML = '';
-                            document.getElementById("productSearchForm").submit(); // 검색 실행
-                        });
-                        autocompleteList.appendChild(suggestion);
-                    });
-                })
-                .catch(err => {
-                    console.error("자동완성 오류:", err);
-                });
-        }, 300); // 300ms 디바운스
-    });
-
-    // 외부 클릭 시 자동완성 닫기
-    document.addEventListener("click", function (e) {
-        if (!autocompleteList.contains(e.target) && e.target !== input) {
-            autocompleteList.innerHTML = '';
-        }
-    });
 });

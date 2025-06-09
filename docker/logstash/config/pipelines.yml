@@ -1,2 +1,4 @@
 - pipeline.id: main
   path.config: "/usr/share/logstash/pipeline/logstash.conf"
+  pipeline.workers: 4         # CPU 코어 수에 맞춰 조정 (예: 코어 4개 → workers 4)
+  pipeline.batch.size: 1000   # 기본 500 → 1,000 으로 증가

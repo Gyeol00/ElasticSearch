@@ -1,10 +1,11 @@
 package com.example.elasticsearch.conifg;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
-@Getter
-@Setter
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,7 +17,4 @@ public class AppInfo {
 
     @Value("${spring.application.version}")
     private String appVersion;
-
-    private String headerLogo;
-
 }

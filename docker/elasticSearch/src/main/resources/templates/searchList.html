@@ -11,22 +11,24 @@
 <body>
 <script src="/js/searchList.js"></script>
 <div id="wrapper">
+  <!-- 헤더 시작 -->
   <th:block th:include="/common/header.html"/>
+  <!-- 헤더 끝 -->
   <main>
     <section class="content">
-      <th:block th:include="/product/side.html"/>
+      <!-- 사이드바-->
+      <th:block th:include="/side.html"/>
+      <!-- 사이드 바 끝 -->
       <div class="container">
         <div class="search">
           <p>
-            <span class="keyword" th:text="${keyword}">키워드</span>&nbsp;&nbsp;검색결과&nbsp;&nbsp;
-            <span class="total">(총: 20건)</span>
+            <span class="keyword">검색창</span>
+            <span class="total"></span>
           </p>
           <div class="search-container">
             <form action="#" id="productSearchForm">
               <div class="search_area">
                 <input type="search" id="subKeywordInput" placeholder="검색어를 입력하세요">
-                <div id="autocomplete-list" class="autocomplete-items" th:text="${keyword}"></div>
-
                 <button type="submit" class="search_icon">
                   <img src="/images/search_ico.svg" alt="검색" class="search_iconImg">
                 </button>
@@ -86,13 +88,18 @@
             <div class="product-item">
               <img class="product-img">
               <div class="product-info">
-                <span class="vendor-name">판매자명</span><br>
+                <span class="vendor-name">판매자등급</span><br>
+                <span class="brand">브랜드</span><br>
                 <span class="pname">상품명</span>
                 <div class="meta">
                   <span>★ 4.8</span>&nbsp;|&nbsp;리뷰 <span>0</span>
                 </div>
+                <span class="badge-free">무료배송</span>
+                <span>배송비</span>
               </div>
               <div class="product-price">
+                <del>정가</del><br>
+                <span class="discount">할인율</span>
                 <span>판매가</span> 원
                 <div class="icons">
                   <button><img src="/images/product/icon_favorite.png" alt="찜"></button>
@@ -107,7 +114,9 @@
       </div>
     </section>
   </main>
+  <!-- 푸터 시작 -->
   <th:block th:include="/common/footer.html"/>
+  <!-- 푸터 끝 -->
 </div>
 </body>
 </html>

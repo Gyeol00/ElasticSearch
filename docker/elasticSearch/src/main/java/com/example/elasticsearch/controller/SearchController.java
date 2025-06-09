@@ -1,49 +1,52 @@
 package com.example.elasticsearch.controller;
 
+import com.example.elasticsearch.dto.PageRequestDTO;
+import com.example.elasticsearch.dto.PageResponseDTO;
 import com.example.elasticsearch.dto.ProductDTO;
-import com.example.elasticsearch.service.NaverShoppingApiService;
-import com.example.elasticsearch.service.ProductService;
+import com.example.elasticsearch.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
+
 
 @Slf4j
-@RestController
+@Controller
+@RequestMapping("/product")
 @RequiredArgsConstructor
-@RequestMapping("/api/search")
 public class SearchController {
 
-    private final ProductService productService;
+   private final SearchService searchService;
 
-    @Autowired
-    private NaverShoppingApiService naverShoppingApiService;
-
-    // 기존 단일 검색 API
-    @GetMapping("/shopping")
-    public String searchShopping(String query, int display, int start) {
-        naverShoppingApiService.searchAndSaveProducts(query, display, start);
-        return "Single query search triggered for: " + query;
+    // 검색 페이지 진입 (뷰만)
+    @GetMapping("/search")
+    public String search() {
+        return "/searchList";
     }
 
-    // 모든 키워드에 대해 100개씩 수집 시작 API
-    @GetMapping("/shopping/all")
-    public String searchAllKeywords() {
-        log.info("searchAllKeywords() 호출됨");
-        naverShoppingApiService.searchAndSaveProductsForKeywords();
-        return "Started search and save for all keywords.";
-    }
 
-    @GetMapping("/products/autocomplete")
-    public List<String> autocomplete(@RequestParam String keyword) {
-        return productService.autocomplete(keyword);
-    }
+    // Ajax용 데이터 페칭
+    @GetMapping("/ajaxSearchList")
+    @ResponseBody
+    public PageResponseDTO<ProductDTO> ajaxSearchList(
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(value = "view", defaultValue = "list") String view
+    ) {
+        log.info("PageRequestDTO: {}", pageRequestDTO);
+        log.info("view: {}", view);
 
+        PageResponseDTO pageResponseDTO = searchService.simpleSearchProducts(pageRequestDTO);
+
+        log.info("pageResponseDTO: {}", pageResponseDTO);
+
+        pageResponseDTO.setView(view);
+        pageResponseDTO.setSortType(pageRequestDTO.getSortType());
+        pageResponseDTO.setPeriod(pageRequestDTO.getPeriod());
+
+        return pageResponseDTO;
+    }
 
 }
+

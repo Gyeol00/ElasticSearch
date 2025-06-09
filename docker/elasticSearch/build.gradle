@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.0'
+    id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -18,41 +18,42 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    // Core Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Security & Thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.apache.commons:commons-lang3'
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    implementation 'co.elastic.clients:elasticsearch-java:8.9.0'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    // JPA
+    // JPA & MySQL
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly   'com.mysql:mysql-connector-j'
 
-    // Elasticsearch 연동 및 날짜/시간 직렬화
+    // Elasticsearch
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+    // JSON 날짜/시간 직렬화
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-    // 기타
+    // 기타 유틸리티
+    implementation 'org.apache.commons:commons-lang3'
     implementation 'org.modelmapper:modelmapper:3.1.1'
     implementation 'org.seleniumhq.selenium:selenium-java:4.20.0'
 
-    compileOnly   'org.projectlombok:lombok'
+    // Lombok
+    compileOnly      'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    // DevTools
+    developmentOnly  'org.springframework.boot:spring-boot-devtools'
+
+    // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly   'org.junit.platform:junit-platform-launcher'
 }
-
 
 tasks.named('test') {
     useJUnitPlatform()
