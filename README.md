@@ -122,7 +122,7 @@ index_time_in_millis: 15,291ms (즉, 15.291초)
   "analyzer": "autocomplete_analyzer",
   "text": "스와로브스키"
 }**
-kibana에서 위 명령어 입력 시
+<br>kibana에서 위 명령어 입력 시
 <img width="1352" alt="스크린샷 2025-06-08 오후 4 23 25" src="https://github.com/user-attachments/assets/de32991a-badd-4121-a100-6bd15f7860bf" />
 <img width="1352" alt="스크린샷 2025-06-08 오후 4 23 36" src="https://github.com/user-attachments/assets/a9075199-14e0-4179-be72-a41713434081" />
 위와 같은 결과를 볼 수 있으며, Edge NGram 기반으로 위와 같이 토큰화되어 **사용자가 "스"만 입력해도 "스와로브스키"와 매칭 가능하게 동작함**
